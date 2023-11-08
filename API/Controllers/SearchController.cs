@@ -1,9 +1,6 @@
-using Application.Tracks;
-using Domain;
-using MediatR;
+using Application.Playlists;
 using Microsoft.AspNetCore.Mvc;
 using API.Services;
-using SpotifyAPI.Web;
 
 namespace API.Controllers
 
@@ -19,7 +16,7 @@ namespace API.Controllers
 
         }
 
-        [HttpGet("/search")]
+        [HttpGet("/api/search")]
         //public async Task<ActionResult<List<Song>>> SearchTracks(string q)
         //{
         //    var searchResponse = new SearchResponse();
