@@ -12,6 +12,7 @@ export default function PlaylistDashboard(props) {
 					selectPlaylist={props.selectPlaylist}
 					playlists={props.playlists}
 					deletePlaylist={props.deletePlaylist}
+					submitting={props.submitting}
 
 				/>
 			</Grid.Column>
@@ -28,6 +29,7 @@ export default function PlaylistDashboard(props) {
 						closeForm={props.closeForm}
 						playlist={props.selectedPlaylist}
 						createOrEdit={props.createOrEdit}
+						submitting={props.submitting}
 					></PlaylistForm>
 				)}
 			</Grid.Column>
@@ -54,5 +56,6 @@ PlaylistDashboard.propTypes = {
 	closeForm: PropTypes.func,
 	editMode: PropTypes.bool,
 	createOrEdit: PropTypes.func,
-	deletePlaylist: PropTypes.func
+	deletePlaylist: PropTypes.func,
+	submitting: PropTypes.bool
 };

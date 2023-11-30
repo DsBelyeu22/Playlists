@@ -1,7 +1,14 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
 import { Segment, Item, Button, Label } from "semantic-ui-react";
 
 export default function PlaylistList(props) {
+	const [target, setTarget] = useState("")
+
+	const handleDelete = (e, id) => {
+		setTarget(e.currentTarget.name)
+		props.deletePlaylist(id)
+	}
 	return (
 		<Segment>
 			<Item.Group divided>
@@ -18,10 +25,12 @@ export default function PlaylistList(props) {
 										color="blue"
 									/>
 									<Button
-										onClick={() => props.deletePlaylist(playlist.id)}
+										onClick={(e) => handleDelete(e, playlist.id)}
 										floated="right"
 										content="Delete"
 										color="red"
+										loading={props.submitting && target === playlist.id}
+										name={playlist.id}
 									/>
 									<Label
 										basic
@@ -51,5 +60,6 @@ PlaylistList.propTypes = {
 	),
 
 	selectPlaylist: PropTypes.func,
-	deletePlaylist: PropTypes.func
+	deletePlaylist: PropTypes.func,
+	submitting: PropTypes.bool,
 };

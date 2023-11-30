@@ -51,6 +51,7 @@ export default function PlaylistForm(props) {
 					placeholder="Image"
 				></Form.Input> */}
 				<Button
+					loading={props.submitting}
 					onClick={props.openForm}
 					floated="right"
 					positive
@@ -83,4 +84,5 @@ PlaylistForm.propTypes = {
 	openForm: PropTypes.func,
 	closeForm: PropTypes.func,
 	createOrEdit: PropTypes.func,
+	submitting: PropTypes.bool
 };
