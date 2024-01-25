@@ -1,9 +1,14 @@
 import { Button, Form, Segment } from "semantic-ui-react";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import { useState } from "react";
+import { useStore } from "../../../../stores/store";
+import { observer } from "mobx-react-lite";
 
-export default function PlaylistForm(props) {
-	const initialState = props.playlist ?? {
+
+const PlaylistForm = observer(function PlaylistForm() {
+	const { playlistStore } = useStore();
+	const { loading, updatePlaylist, createPlaylist, selectedPlaylist, closeForm, openForm } = playlistStore;
+	const initialState = selectedPlaylist ?? {
 		id: "",
 		name: "",
 		image: "",
@@ -12,14 +17,16 @@ export default function PlaylistForm(props) {
 
 	const [playlist, setPlaylist] = useState(initialState);
 
-	function handleSubmit() {
-		props.createOrEdit(playlist)
-	}
+
 
 	function handleChange(event) {
 		const { name, value } = event.target;
 		console.log(name);
 		setPlaylist({ ...playlist, [name]: value });
+	}
+
+	const handleSubmit = () => {
+		playlist.id ? updatePlaylist(playlist) : createPlaylist(playlist)
 	}
 
 	return (
@@ -51,8 +58,8 @@ export default function PlaylistForm(props) {
 					placeholder="Image"
 				></Form.Input> */}
 				<Button
-					loading={props.submitting}
-					onClick={props.openForm}
+					loading={loading}
+					onClick={openForm}
 					floated="right"
 					positive
 					type="submit"
@@ -60,7 +67,7 @@ export default function PlaylistForm(props) {
 
 				></Button>
 				<Button
-					onClick={props.closeForm}
+					onClick={closeForm}
 					floated="right"
 					type="button"
 					content="Cancel"
@@ -68,21 +75,22 @@ export default function PlaylistForm(props) {
 			</Form>
 		</Segment>
 	);
-}
+})
+export default PlaylistForm;
 
-PlaylistForm.propTypes = {
-	playlist: PropTypes.shape({
-		id: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-		image: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
-		description: PropTypes.oneOfType([
-			PropTypes.string,
-			PropTypes.oneOf([null]),
-		]),
-		// Add more properties as needed
-	}),
-	openForm: PropTypes.func,
-	closeForm: PropTypes.func,
-	createOrEdit: PropTypes.func,
-	submitting: PropTypes.bool
-};
+// PlaylistForm.propTypes = {
+// 	// playlist: PropTypes.shape({
+// 	// 	id: PropTypes.string.isRequired,
+// 	// 	name: PropTypes.string.isRequired,
+// 	// 	image: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
+// 	// 	description: PropTypes.oneOfType([
+// 	// 		PropTypes.string,
+// 	// 		PropTypes.oneOf([null]),
+// 	// 	]),
+// 	// 	// Add more properties as needed
+// 	// }),
+// 	// openForm: PropTypes.func,
+// 	// closeForm: PropTypes.func,
+// 	createOrEdit: PropTypes.func,
+// 	submitting: PropTypes.bool
+// };

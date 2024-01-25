@@ -1,7 +1,8 @@
 import { Button, Container, Menu } from "semantic-ui-react";
-import PropTypes from "prop-types";
+import { useStore } from "../../../stores/store";
 
-export default function Navbar(props) {
+export default function Navbar() {
+	const { playlistStore } = useStore();
 	return (
 		<>
 			<Menu
@@ -22,7 +23,7 @@ export default function Navbar(props) {
 						<Button
 							positive
 							content="Create Playlist"
-							onClick={props.openForm}
+							onClick={() => playlistStore.openForm()}
 						/>
 					</Menu.Item>
 				</Container>
@@ -31,6 +32,4 @@ export default function Navbar(props) {
 	);
 }
 
-Navbar.propTypes = {
-	openForm: PropTypes.func,
-};
+

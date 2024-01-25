@@ -1,23 +1,30 @@
 // import { Card, Image, Icon } from "semantic-ui-react";
 import { Button, Card, Image } from "semantic-ui-react";
 import PropTypes from "prop-types";
+import { useStore } from "../../../../stores/store";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-export default function PlaylistDetails(props) {
+export default function PlaylistDetails() {
+
+	const { playlistStore } = useStore();
+	const { selectedPlaylist: playlist, openForm, cancelSelectedPlaylist } = playlistStore;
+
+	if (!playlist) return <LoadingComponent />;
 	return (
 		<Card fluid>
 			<Image
 				// src={`/assets/categoryImages/${props.playlist?.image}`}
-				src={props.playlist?.image}
+				src={playlist.image}
 				wrapped
 				ui={false}
 			/>
 			<Card.Content>
-				<Card.Header>{props.playlist?.name}</Card.Header>
+				<Card.Header>{playlist.name}</Card.Header>
 				<Card.Meta>
-					<span className="date">{props.playlist?.createdAt}</span>
+					<span className="date">{playlist.createdAt}</span>
 				</Card.Meta>
 				<Card.Description>
-					{props.playlist?.description}
+					{playlist.description}
 				</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
@@ -26,13 +33,13 @@ export default function PlaylistDetails(props) {
 						basic
 						color="blue"
 						content="Edit"
-						onClick={() => props.openForm(props.playlist.id)}
+						onClick={() => openForm(playlist.id)}
 					/>
 					<Button
 						basic
 						color="grey"
 						content="Cancel"
-						onClick={props.cancelSelectPlaylist}
+						onClick={cancelSelectedPlaylist}
 					/>
 				</Button.Group>
 			</Card.Content>

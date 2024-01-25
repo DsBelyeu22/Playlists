@@ -1,35 +1,44 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Segment, Item, Button, Label } from "semantic-ui-react";
+import { useStore } from "../../../../stores/store";
+import { observer } from "mobx-react-lite";
 
-export default function PlaylistList(props) {
-	const [target, setTarget] = useState("")
 
-	const handleDelete = (e, id) => {
-		setTarget(e.currentTarget.name)
-		props.deletePlaylist(id)
+// the list of playlists needs to observe any changes made to it from any components that have CRUD in them
+const PlaylistList = observer(function PlaylistList() {
+	const { playlistStore } = useStore();
+	const { playlistsByDate, handleDelete, loading, selectPlaylist } = playlistStore;
+	const [target] = useState("")
+
+	console.log(playlistsByDate);
+
+	function handlePlaylistDelete(id) {
+		// console.log(e);
+		// setTarget(e.currentTarget.name)
+		handleDelete(id)
 	}
+
 	return (
 		<Segment>
 			<Item.Group divided>
-				{props.playlists.map((playlist) => {
+				{playlistsByDate.map((playlist) => {
 					return (
 						<Item key={playlist.id}>
 							<Item.Content>
 								<Item.Header as="a">{playlist.name}</Item.Header>
 								<Item.Extra>
 									<Button
-										onClick={() => props.selectPlaylist(playlist.id)}
+										onClick={() => selectPlaylist(playlist.id)}
 										floated="right"
 										content="View"
 										color="blue"
 									/>
 									<Button
-										onClick={(e) => handleDelete(e, playlist.id)}
+										onClick={() => handlePlaylistDelete(playlist.id)}
 										floated="right"
 										content="Delete"
 										color="red"
-										loading={props.submitting && target === playlist.id}
+										loading={loading && target === playlist.id}
 										name={playlist.id}
 									/>
 									<Label
@@ -44,22 +53,6 @@ export default function PlaylistList(props) {
 			</Item.Group>
 		</Segment>
 	);
-}
+})
+export default PlaylistList
 
-PlaylistList.propTypes = {
-	playlists: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			image: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
-			description: PropTypes.oneOfType([
-				PropTypes.string,
-				PropTypes.oneOf([null]),
-			]),
-		})
-	),
-
-	selectPlaylist: PropTypes.func,
-	deletePlaylist: PropTypes.func,
-	submitting: PropTypes.bool,
-};
