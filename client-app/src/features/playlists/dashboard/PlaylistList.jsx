@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Segment, Item, Button, Label } from "semantic-ui-react";
 import { useStore } from "../../../../stores/store";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 
 // the list of playlists needs to observe any changes made to it from any components that have CRUD in them
 const PlaylistList = observer(function PlaylistList() {
 	const { playlistStore } = useStore();
-	const { playlistsByDate, handleDelete, loading, selectPlaylist } = playlistStore;
+	const { playlistsByDate, handleDelete, loading } = playlistStore;
 	const [target] = useState("")
 
 	console.log(playlistsByDate);
@@ -28,7 +29,7 @@ const PlaylistList = observer(function PlaylistList() {
 								<Item.Header as="a">{playlist.name}</Item.Header>
 								<Item.Extra>
 									<Button
-										onClick={() => selectPlaylist(playlist.id)}
+										as={Link} to={`/playlists/${playlist.id}`}
 										floated="right"
 										content="View"
 										color="blue"

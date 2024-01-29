@@ -27,6 +27,15 @@ export default class PlaylistStore {
 
 	constructor() {
 		makeAutoObservable(this, {});
+
+		this.getPlaylist = (id) => {
+			return this.playlistRegistry.get(id);
+		};
+
+		this.setPlaylist = (playlist) => {
+			playlist.createdAt = playlist.createdAt.split("T")[0];
+			this.playlistRegistry.set(playlist.id, playlist);
+		};
 	}
 
 	get playlistsByDate() {
@@ -43,10 +52,8 @@ export default class PlaylistStore {
 			runInAction(() => {
 				this.playlistRegistry.clear();
 				playlists.forEach((playlist) => {
-					// playlist.createdAt = playlist.createdAt.split("T")[0];
 					console.log(playlist.createdAt);
-
-					this.playlistRegistry.set(playlist.id, playlist);
+					this.setPlaylist(playlist);
 				});
 				// this.playlists = playlists; // Update the playlists array
 				this.loadingInitial = false;
@@ -59,21 +66,42 @@ export default class PlaylistStore {
 		}
 	};
 
-	selectPlaylist = (id) => {
-		// this.selectedPlaylist = this.playlists.find((x) => x.id === id);
-		this.playlistRegistry.get(id);
-	};
-	cancelSelectedPlaylist = () => {
-		this.selectedPlaylist = undefined;
+	loadPlaylist = async (id) => {
+		let playlist = this.getPlaylist(id);
+
+		if (playlist) {
+			this.selectedPlaylist = playlist;
+			return playlist;
+		} else {
+			this.loadingInitial = true;
+			try {
+				playlist = await agent.Playlists.details(id);
+				this.setPlaylist(playlist);
+				runInAction(() => (this.selectedPlaylist = playlist));
+				this.loadingInitial = false;
+				return playlist;
+			} catch (error) {
+				console.log(error);
+				this.loadingInitial = false;
+			}
+		}
 	};
 
-	openForm = (id) => {
-		id ? this.selectPlaylist(id) : this.cancelSelectedPlaylist();
-		this.editMode = true;
-	};
-	closeForm = () => {
-		this.editMode = false;
-	};
+	// selectPlaylist = (id) => {
+	// 	// this.selectedPlaylist = this.playlists.find((x) => x.id === id);
+	// 	this.playlistRegistry.get(id);
+	// };
+	// cancelSelectedPlaylist = () => {
+	// 	this.selectedPlaylist = undefined;
+	// };
+
+	// openForm = (id) => {
+	// 	id ? this.selectPlaylist(id) : this.cancelSelectedPlaylist();
+	// 	this.editMode = true;
+	// };
+	// closeForm = () => {
+	// 	this.editMode = false;
+	// };
 
 	handleDelete = async (id) => {
 		this.loading = true;
@@ -82,9 +110,6 @@ export default class PlaylistStore {
 			runInAction(() => {
 				// this.playlists = [...this.playlists.filter((x) => x.id !== id)];
 				this.playlistRegistry.delete(id);
-				if (this.selectedPlaylist?.id === id) {
-					this.cancelSelectedPlaylist();
-				}
 				this.loading = false;
 			});
 		} catch (error) {

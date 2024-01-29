@@ -1,15 +1,24 @@
-// import { Card, Image, Icon } from "semantic-ui-react";
 import { Button, Card, Image } from "semantic-ui-react";
-import PropTypes from "prop-types";
 import { useStore } from "../../../../stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-export default function PlaylistDetails() {
+const PlaylistDetails = observer(function PlaylistDetails() {
 
 	const { playlistStore } = useStore();
-	const { selectedPlaylist: playlist, openForm, cancelSelectedPlaylist } = playlistStore;
+	const { selectedPlaylist: playlist, loadPlaylist, loadingInitial } = playlistStore;
+	let { id } = useParams()
+	console.log(id);
 
-	if (!playlist) return <LoadingComponent />;
+	useEffect(() => {
+		if (id) {
+			loadPlaylist(id)
+		}
+	}, [id, loadPlaylist])
+
+	if (loadingInitial || !playlist) return <LoadingComponent />;
 	return (
 		<Card fluid>
 			<Image
@@ -33,29 +42,18 @@ export default function PlaylistDetails() {
 						basic
 						color="blue"
 						content="Edit"
-						onClick={() => openForm(playlist.id)}
+						as={Link} to={`/manage/${playlist.id}`}
 					/>
 					<Button
 						basic
 						color="grey"
 						content="Cancel"
-						onClick={cancelSelectedPlaylist}
+						as={Link} to={'/playlists'}
 					/>
 				</Button.Group>
 			</Card.Content>
 		</Card>
 	);
 }
-
-PlaylistDetails.propTypes = {
-	playlist: PropTypes.shape({
-		id: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-		createdAt: PropTypes.string,
-		image: PropTypes.string,
-		description: PropTypes.string,
-
-	}),
-	cancelSelectPlaylist: PropTypes.func,
-	openForm: PropTypes.func,
-};
+)
+export default PlaylistDetails

@@ -1,30 +1,24 @@
-import { useEffect } from "react";
+/* eslint-disable no-unused-vars */
 import { Container } from "semantic-ui-react";
 import Navbar from "./Navbar";
-import PlaylistDashboard from "../../features/playlists/dashboard/PlaylistDashboard";
-import LoadingComponent from "./LoadingComponent";
-import { useStore } from "../../../stores/store";
+import { Outlet, useLocation } from "react-router-dom";
+import HomePage from '../../features/playlists/home/HomePage'
 
 function App() {
-	const { playlistStore } = useStore();
 
-	// CRUD functions will modify the playlists state from the app component so the functions will pass down as props to the other components
-
-	useEffect(() => {
-		playlistStore.loadPlaylists();
-	}, [playlistStore]);
-
-	if (playlistStore.loadingInitial) {
-		return <LoadingComponent content="Loading"></LoadingComponent>;
-	}
+	const location = useLocation();
 
 	return (
 		<>
-			<Navbar />
-			<Container style={{ marginTop: "7em" }}>
-				<h2>{playlistStore.name}</h2>
-				<PlaylistDashboard></PlaylistDashboard>
-			</Container>
+			{location.pathname === '/' ? <HomePage /> : (
+				<>
+					<Navbar />
+					<Container style={{ marginTop: "7em" }}>
+						<Outlet />
+					</Container>
+				</>
+			)}
+
 		</>
 	);
 }

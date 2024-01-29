@@ -1,8 +1,7 @@
 import { Button, Container, Menu } from "semantic-ui-react";
-import { useStore } from "../../../stores/store";
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
-	const { playlistStore } = useStore();
 	return (
 		<>
 			<Menu
@@ -10,7 +9,7 @@ export default function Navbar() {
 				fixed="top"
 			>
 				<Container>
-					<Menu.Item header>
+					<Menu.Item as={NavLink} to='/' header>
 						<img
 							src="/assets/logo.png"
 							alt="logo"
@@ -18,12 +17,12 @@ export default function Navbar() {
 						/>{" "}
 						Tune Me
 					</Menu.Item>
-					<Menu.Item name="Playlists" />
+					<Menu.Item as={NavLink} to='/playlists' name="Playlists" />
 					<Menu.Item>
 						<Button
 							positive
 							content="Create Playlist"
-							onClick={() => playlistStore.openForm()}
+							as={NavLink} to='/createPlaylist'
 						/>
 					</Menu.Item>
 				</Container>

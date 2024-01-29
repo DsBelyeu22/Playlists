@@ -1,14 +1,26 @@
 import { Grid } from "semantic-ui-react";
 import PlaylistList from "./PlaylistList";
-import PlaylistDetails from "../details/PlaylistDetails";
-import PlaylistForm from "../form/PlaylistForm";
 import { useStore } from "../../../../stores/store";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 const PlaylistDashboard = observer(function PlaylistDashboard() {
 	const { playlistStore } = useStore();
-	const { playlists, selectedPlaylist, editMode } = playlistStore;
-	console.log(playlists);
+	const { loadPlaylists, playlistRegistry } = playlistStore
+
+	// CRUD functions will modify the playlists state from the app component so the functions will pass down as props to the other components
+
+	useEffect(() => {
+
+		if (playlistRegistry.size <= 1) {
+			loadPlaylists()
+		}
+	}, [loadPlaylists, playlistRegistry.size]);
+
+	if (playlistStore.loadingInitial) {
+		return <LoadingComponent content="Loading"></LoadingComponent>;
+	}
 
 	return (
 		<Grid>
@@ -16,14 +28,7 @@ const PlaylistDashboard = observer(function PlaylistDashboard() {
 				<PlaylistList />
 			</Grid.Column>
 			<Grid.Column width={6}>
-				{selectedPlaylist && !editMode && (
-					<PlaylistDetails
-					></PlaylistDetails>
-				)}
-				{editMode && (
-					<PlaylistForm
-					></PlaylistForm>
-				)}
+				<h2>Playlist Filters</h2>
 			</Grid.Column>
 		</Grid>
 	);

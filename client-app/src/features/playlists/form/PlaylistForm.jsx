@@ -1,21 +1,37 @@
+/* eslint-disable no-unused-vars */
 import { Button, Form, Segment } from "semantic-ui-react";
 // import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "../../../../stores/store";
 import { observer } from "mobx-react-lite";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { v4 as uuid } from 'uuid'
 
 
 const PlaylistForm = observer(function PlaylistForm() {
 	const { playlistStore } = useStore();
-	const { loading, updatePlaylist, createPlaylist, selectedPlaylist, closeForm, openForm } = playlistStore;
-	const initialState = selectedPlaylist ?? {
+	const { updatePlaylist, createPlaylist, selectedPlaylist, loading, loadPlaylist, loadingInitial } = playlistStore;
+
+	const [playlist, setPlaylist] = useState({
 		id: "",
 		name: "",
 		image: "",
 		description: "",
-	};
+	});
 
-	const [playlist, setPlaylist] = useState(initialState);
+	const { id } = useParams();
+	console.log(id);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (id) {
+			loadPlaylist(id).then(playlist => setPlaylist(playlist))
+		}
+	}, [id, loadPlaylist])
+
+
 
 
 
@@ -26,8 +42,16 @@ const PlaylistForm = observer(function PlaylistForm() {
 	}
 
 	const handleSubmit = () => {
-		playlist.id ? updatePlaylist(playlist) : createPlaylist(playlist)
+		if (!playlist.id) {
+			playlist.id = uuid();
+			createPlaylist(playlist).then(() => navigate(`/playlists/${playlist.id}`))
+		} else {
+			updatePlaylist(playlist).then(() => navigate(`/playlists/${playlist.id}`))
+		}
+
 	}
+
+	if (loadingInitial) return <LoadingComponent content={'Loading Playlist...'} />
 
 	return (
 		<Segment clearing>
@@ -59,7 +83,6 @@ const PlaylistForm = observer(function PlaylistForm() {
 				></Form.Input> */}
 				<Button
 					loading={loading}
-					onClick={openForm}
 					floated="right"
 					positive
 					type="submit"
@@ -67,10 +90,10 @@ const PlaylistForm = observer(function PlaylistForm() {
 
 				></Button>
 				<Button
-					onClick={closeForm}
 					floated="right"
 					type="button"
 					content="Cancel"
+					as={Link} to='/playlists'
 				></Button>
 			</Form>
 		</Segment>
